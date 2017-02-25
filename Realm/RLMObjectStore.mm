@@ -85,7 +85,7 @@ void RLMInitializeSwiftAccessorGenerics(__unsafe_unretained RLMObjectBase *const
     }
 
     for (RLMProperty *prop in object->_objectSchema.swiftGenericProperties) {
-        if (prop->_type == RLMPropertyTypeArray) {
+        if (prop.array) {
             RLMArray *array = [[RLMArrayLinkView alloc] initWithParent:object property:prop];
             [object_getIvar(object, prop.swiftIvar) set_rlmArray:array];
         }
@@ -285,7 +285,7 @@ void RLMAddObjectToRealm(__unsafe_unretained RLMObjectBase *const object,
         // get object from ivar using key value coding
         id value = nil;
         if (prop.swiftIvar) {
-            if (prop.type == RLMPropertyTypeArray) {
+            if (prop.array) {
                 value = static_cast<RLMListBase *>(object_getIvar(object, prop.swiftIvar))._rlmArray;
             }
             else { // optional
@@ -306,7 +306,7 @@ void RLMAddObjectToRealm(__unsafe_unretained RLMObjectBase *const object,
         // this is mainly an issue when the object graph being added has cycles,
         // as it's not obvious that the user has to set the *ivars* to nil to
         // avoid leaking memory
-        if (prop.type == RLMPropertyTypeObject || prop.type == RLMPropertyTypeArray) {
+        if (prop.type == RLMPropertyTypeObject) {
             if (!prop.swiftIvar) {
                 ((void(*)(id, SEL, id))objc_msgSend)(object, prop.setterSel, nil);
             }
@@ -396,7 +396,7 @@ RLMObjectBase *RLMCreateObjectInRealmWithValue(RLMRealm *realm, NSString *classN
                     defaultValues = RLMDefaultValuesForObjectSchema(info.rlmObjectSchema);
                 }
                 propValue = defaultValues[prop.name];
-                if (!propValue && (prop.type == RLMPropertyTypeObject || prop.type == RLMPropertyTypeArray)) {
+                if (!propValue && prop.type == RLMPropertyTypeObject) {
                     propValue = NSNull.null;
                 }
             }
