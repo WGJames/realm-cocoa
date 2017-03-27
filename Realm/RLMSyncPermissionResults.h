@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2016 Realm Inc.
+// Copyright 2017 Realm Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,15 +16,28 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-void RLMSwapOutClassMethod(id classObject, SEL original, SEL swizzled);
-void RLMSwapOutInstanceMethod(id classObject, SEL original, SEL swizzled);
+#import <Foundation/Foundation.h>
 
-#ifndef ACCOUNT_NAME
-#define ACCOUNT_NAME() NSStringFromSelector(_cmd)
-#endif
+#import "RLMSyncUser.h"
+#import "RLMRealm.h"
 
-#ifndef CUSTOM_REALM_URL
-#define CUSTOM_REALM_URL(realm_identifier) \
-[NSURL URLWithString:[NSString stringWithFormat:@"realm://localhost:9080/~/%@%@", ACCOUNT_NAME(), realm_identifier]]
-#define REALM_URL() CUSTOM_REALM_URL(@"")
-#endif
+@class RLMSyncPermissionValue;
+
+@interface RLMSyncPermissionResultsToken : RLMNotificationToken
+@end
+
+@interface RLMSyncPermissionResults : NSObject
+
+@property (nonatomic, readonly) NSInteger count;
+
+- (RLMSyncPermissionValue *)permissionAtIndex:(NSInteger)index;
+
+- (RLMSyncPermissionResultsToken *)addNotificationBlock:(RLMPermissionStatusBlock)block;
+
+/// :nodoc:
+- (instancetype)init __attribute__((unavailable("RLMSyncPermissionResults cannot be created directly")));
+
+/// :nodoc:
++ (instancetype)new __attribute__((unavailable("RLMSyncPermissionResults cannot be created directly")));
+
+@end
