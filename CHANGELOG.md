@@ -12,6 +12,7 @@ x.x.x Release notes (yyyy-MM-dd)
 ### Bugfixes
 
 * Fix CocoaPods installation with static libraries and multiple platforms.
+* Fix `valueForKey:`/`valueForKeyPath:` returns incorrect results for `List` properties.
 
 2.5.0 Release notes (2017-03-28)
 =============================================================
